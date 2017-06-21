@@ -1,0 +1,30 @@
+- name: DOCKER_COMPOSE Ensure that needed{{dc_config_folder}} exists  
+  become: yes
+  file: path={{dc_config_folder}} state=directory recurse=yes mode=0777
+
+- name: DOCKER_COMPOSE Ensure that needed{{dc_config_folder}} exists  
+  become: yes
+  file: path={{dc_volumes_folder}} state=directory recurse=yes owner={{ansible_user}}
+
+- name: DOCKER_COMPOSE Copy docker compose master file  
+  template: src=docker-compose.yml.j2 dest={{dc_config_folder}}/docker-compose.yml
+  tags: template
+
+- name: DOCKER Create directories for docker_config files
+  file: path={{item.dest_path}} state=directory recurse=yes 
+  with_items: "{{docker_config_files}}"
+
+- name: DOCKER Copy docker config files
+  copy: src={{item.source_file}} dest={{item.dest_path}}/{{item.dest_file}}  
+  with_items: "{{docker_config_files}}"
+
+- name: DOCKER Copy environment files (templates)
+  template: src={{item}} dest={{dc_config_folder}}/{{ item | basename | regex_replace('\.j2','') }}
+  with_fileglob:
+    - "{{playbook_dir + '/' + docker_templates_folder}}/.env*"
+
+- name: DOCKER_COMPOSE Add docker-compose to start on boot
+  become: yes
+  lineinfile: dest=/etc/rc.local line="/usr/local/bin/docker-compose -f {{dc_config_folder}}/docker-compose.yml up -d" insertbefore="exit 0"
+
+

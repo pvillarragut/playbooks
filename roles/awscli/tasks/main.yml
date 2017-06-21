@@ -1,0 +1,17 @@
+---
+
+- name:  Insall base awscli
+  become: yes
+  pip: name=awscli
+
+- name: DOCKER Add boto lib
+  become: yes
+  pip: name=boto
+
+- name: Create directory for credentials
+  file: path=~/.aws state=directory
+
+- name: Create credentials file from template
+  template: src=credentials.yml dest=~/.aws/credentials
+
+  

@@ -1,0 +1,21 @@
+---
+- name: ANSIBLE add ansible repo
+  become: yes
+  apt_repository: repo={{ ansible_repo }} update_cache=yes 
+  retries: 5
+  delay: 10
+  tags: deploy
+
+- name: ANSIBLE apt-get install ansible_req_packages
+  become: yes
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=3600
+  with_items: "{{ansible_req_packages}}"
+  retries: 3
+  delay: 5
+  tags: deploy
+
+- name: ANSIBLE install ansible_pip_packages
+  become: yes
+  pip: name={{ item }} state=latest
+  with_items: "{{ansible_pip_packages}}"
+

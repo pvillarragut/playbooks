@@ -1,0 +1,19 @@
+---
+
+- name: SYSTEM apt-get update if needed
+  become: yes  
+  apt: update_cache=yes 
+
+- name: SYSTEM Upgrade packages
+  become: yes
+  apt: upgrade=dist
+
+- name: BASE Install packages
+  become: yes
+  apt: name={{ item }} state=present force=yes update_cache=yes cache_valid_time=3600
+  with_items: "{{base_packages}}"
+  retries: 3
+
+- name: BASE Ensure NTP is running and enabled at system start.
+  become: yes
+  service: name=ntp state=started enabled=yes

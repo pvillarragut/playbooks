@@ -1,0 +1,13 @@
+---
+ansible_repo: ppa:ansible/ansible
+ansible_req_packages:
+   - software-properties-common
+   - python-pip
+   - python-dev
+   - build-essential
+   - python-virtualenv
+   - ansible
+   - sshpass
+ansible_pip_packages:
+   - pywinrm
+   

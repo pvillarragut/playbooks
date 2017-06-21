@@ -1,0 +1,11 @@
+---
+
+- name: RUNDECK Install packages (Docker server and client )
+  become: yes
+  apt: deb={{item}}
+  with_items: "{{rundeck_packages}}"deplo
+    
+- name: RUNDECK Start
+  become: yes
+  service: name=rundeckd enabled=true state=started  
+

@@ -1,0 +1,57 @@
+---
+
+- name: DOCKER Add key
+  become: yes
+  shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -  
+
+- name: DOCKER Add Docker Repo
+  become: yes
+  apt_repository: repo='deb https://download.docker.com/linux/ubuntu xenial stable' state=present
+
+- name: DOCKER Install package
+  become: yes
+  apt: name=docker-ce={{docker_version}} state=present update_cache=yes
+
+- name: DOCKER Run service
+  become: yes
+  service: name=docker state=started enabled=yes
+
+- name: DOCKER Add {{ ansible_ssh_user }} user to docker group
+  become: yes	
+  user: name={{ ansible_ssh_user }} groups=docker append=yes
+
+- name: DOCKER Restart ssh 
+  shell: sleep 5; pkill -u {{ ansible_ssh_user }} sshd
+  async: 3
+  poll: 2  
+
+- name: DOCKER Add pika lib
+  become: yes
+  pip: name=pika
+
+- name: DOCKER install docker compose
+  become: yes
+  pip: name=docker-compose
+
+- name: DOCKER Create dokcer log directory directory
+  become: yes
+  file: path=/var/log/docker state=directory owner=syslog group=adm mode=0755
+
+- name: DOCKER Copy rsyslog config 
+  become: yes
+  copy: src={{item}} dest=/etc/{{item}} mode=0644
+  with_items:
+    - rsyslog.d/40-docker.conf    
+    - logrotate.d/docker    
+
+- name: DOCKER Ensure that UDP syslog is enabled
+  become: yes  
+  replace: dest=/etc/rsyslog.conf regexp='{{item.search}}' replace='{{item.replace}}'
+  with_items:
+    - {'search': '^#module\(load=\"imudp\"\)', 'replace': 'module(load="imudp")'}
+    - {'search': '^#input\(type=\"imudp\" port=\"514\"\)', 'replace': 'input(type="imudp" port="514")'}  
+
+- name: DOCKER RSYSLOG Restart service
+  become: yes
+  service: name=rsyslog  state=restarted  
+  

@@ -1,0 +1,5 @@
+---
+
+rundeck_packages: 
+  - http://dl.bintray.com/rundeck/rundeck-deb/rundeck-2.8.2-1-GA.deb
+  - https://github.com/rundeck/rundeck-cli/releases/download/v1.0.14/rundeck-cli_1.0.14-1_all.deb

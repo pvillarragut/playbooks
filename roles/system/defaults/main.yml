@@ -1,0 +1,27 @@
+---
+
+base_packages:
+   - acpid   
+   - htop
+   - git
+   - curl
+   - vim
+   - screen
+   - ssh
+   - tree
+   - build-essential
+   - make
+   - automake
+   - zip   
+   - rsync
+   - sysstat
+   - dstat
+   - screen
+   - telnet
+   - traceroute
+   - mtr
+   - lsof   
+   - tofrodos
+   - ntp
+   - python-pip
+   - openjdk-8-jdk

@@ -1,0 +1,14 @@
+dc_config_folder: /etc/docker
+dc_volumes_folder: /opt/docker
+docker_subnet: 172.19.0.0/24
+docker_gateway: 172.19.0.0/24
+docker_containers:
+    - { 'name': 'dhcp', 'image': 'joebiellik/dhcpd', 'image_version': 'latest', 'env_file':'.env_dhcp', 'volumes':['{{dc_volumes_folder}}/dhcp/etc/dhcpd.conf:/etc/dhcp/dhcpd.conf'], 'ports':[''], 'network_mode':'host', 'ip_address': '172.19.0.2'}
+
+docker_config_files:
+    - {'source_file': 'files/dhcp/dhcpd.conf', 'dest_path': '{{dc_volumes_folder}}/dhcp/etc','dest_file':'dhcpd.conf'}
+
+docker_templates_folder: templates
+
+
+    

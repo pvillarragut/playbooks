@@ -1,0 +1,48 @@
+#jinja2: lstrip_blocks: True, trim_blocks: True
+version: '3'
+services:
+
+{%for item in docker_containers %}
+
+  {{item.name}}:
+    image: {{item.image}}:{{item.image_version}}
+    hostname: {{item.name}}
+    container_name: {{item.name}}
+    {% if item.network_mode == "host" %}
+    network_mode: {{item.network_mode}}    
+    {% else %}
+    networks:
+      static:
+        ipv4_address: {{item.ip_address}}
+    {% endif %}
+    logging:
+      driver: syslog
+      options:
+        tag: "docker/{{'{{.Name}}'}}"
+        syslog-address: "udp://127.0.0.1"
+  {% if item.volumes != ['']%}
+    volumes:
+    {% for volume in item.volumes %}
+      - {{volume}}
+    {% endfor %}
+  {% endif %}
+  {% if item.ports != ['']%}
+    ports:
+    {% for port in item.ports %}
+      - {{port}}
+    {% endfor %}
+  {% endif %}
+  {% if item.env_file != ''%}
+    env_file:
+      - {{dc_config_folder}}/{{item.env_file}}
+  {% endif %}  
+{% endfor %}
+
+  
+networks:
+  static:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: {{docker_subnet}}
