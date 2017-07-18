@@ -3,7 +3,7 @@
 - name: RUNDECK Install packages (Docker server and client )
   become: yes
   apt: deb={{item}}
-  with_items: "{{rundeck_packages}}"deplo
+  with_items: "{{rundeck_packages}}" 
     
 - name: RUNDECK Start
   become: yes
