@@ -8,6 +8,9 @@ services:
     image: {{item.image}}:{{item.image_version}}
     hostname: {{item.name}}
     container_name: {{item.name}}
+    {% if item.user != ''%}
+    user: {{item.user}}
+    {% endif %}
     {% if item.network_mode == "host" %}
     network_mode: {{item.network_mode}}    
     {% else %}
@@ -32,10 +35,24 @@ services:
       - {{port}}
     {% endfor %}
   {% endif %}
+  {% if item.links != ['']%}
+    links:
+    {% for link in item.links %}
+      - {{link}}
+    {% endfor %}
+  {% endif %}
+  {% if item.entrypoints != ['']%}
+    entrypoint:
+    {% for entrypoint in item.entrypoints %}
+      - {{entrypoint}}
+    {% endfor %}
+  {% endif %}
   {% if item.env_file != ''%}
     env_file:
       - {{dc_config_folder}}/{{item.env_file}}
-  {% endif %}  
+  {% endif %} 
+    
+
 {% endfor %}
 
   
